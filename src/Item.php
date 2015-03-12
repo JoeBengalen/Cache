@@ -125,11 +125,11 @@ class Item implements CacheItemInterface
     public function setExpiration($ttl = null)
     {
         if (is_null($ttl)) {
-            $this->expire = null;
+            $this->expiration = null;
         } elseif ($ttl instanceof DateTime) {
-            $this->expire = $ttl;
+            $this->expiration = $ttl;
         } elseif (is_int($ttl)) {
-            $this->expire = new DateTime("+{$ttl} seconds");
+            $this->expiration = new DateTime("+{$ttl} seconds");
         } else {
             throw new InvalidArgumentException(printf("ttl must either be null, \DateTime or an integer. A %s was given."), [gettype($ttl)]);
         }
