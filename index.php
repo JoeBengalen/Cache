@@ -1,6 +1,25 @@
 <?php
 
+use JoeBengalen\Cache\Pool;
+use JoeBengalen\Cache\Repository\ArrayRepository;
+
+error_reporting(-1);
+ini_set('display_errors', 1);
+
+// Set default timezone
+date_default_timezone_set('Europe/Amsterdam');
+
 require_once 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+
+$pool = new Pool(new ArrayRepository);
+
+$item = $pool->getItem('test2');
+$item->set('some value');
+$pool->save($item);
+
+// Note that the order of keys is the same as requested.
+var_dump($pool->getItems(['test1', 'test2', 'test3']));
+var_dump($pool->getItems());
 
 /**
  * Gets a list of available widgets.

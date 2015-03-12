@@ -10,6 +10,9 @@ use Psr\Cache\CacheException;
 
 class Pool implements CacheItemPoolInterface
 {
+    /**
+     * @var \JoeBengalen\Cache\Repository\RepositoryInterface $repository 
+     */
     protected $repository;
     
     protected $defaultTtl = 3600; // 1 hour
@@ -37,34 +40,56 @@ class Pool implements CacheItemPoolInterface
             return $this->deferred[$key];
         }
         
-        // perform fetch, not first a contains as this may result in multiple fetch calls
-        $item = $this->repository->fetch($key);
-        
-        if ($item instanceof Item) {
-            return $item->setHit(true);
+        if ($this->repository->contains($key)) {
+            $item = $this->repository->fetch($key);
+            $item->setHit(true);
+            return $item;
         }
         
-        return new Item($key, $this->defaultTtl);
+        return $this->createItem($key);
     }
 
     /**
-     * Returns a traversable set of cache items.
-     *
-     * @param array $keys           Indexed array of keys of items to retrieve.
+     * Returns a list of cache items.
      * 
-     * @return array|\Traversable   Traversable collection of Cache Items keyed by the cache keys of
-     *                              each item. A Cache item will be returned for each key, even if that
-     *                              key is not found. However, if no keys are specified then an empty
-     *                              traversable MUST be returned instead.
+     * A Cache item will be returned for each key, even if that key is not found. 
+     *
+     * @param array $keys Indexed array of keys of items to retrieve.
+     * 
+     * @return \JoeBengalen\Cache\Item[] List of Cache Items keyed by the cache keys of each item.
+     *                                   If no keys are specified then an empty array will be returned.
      */
     public function getItems(array $keys = [])
     {
-        $items = [];
-        foreach ($keys as $key) {
-            $items[$key] = $this->getItem($key);
-        }
+        // Method uses a complecated logic to make sure only the containsAll and fetchAll 
+        // repository function are called, as that may improve performance over multiple 
+        // contains and fetch calls.
         
-        return $items;
+        $containsResult = $this->repository->containsAll($keys);
+        $cachedKeys     = array_keys(array_filter($containsResult));
+        $cachedItems    = $this->repository->fetchAll($cachedKeys);
+        $uncachedItems  = array_filter($containsResult, function ($contains) {
+            return !$contains;
+        });
+        
+        // Set hit to true on each cached item.
+        array_walk($cachedItems, function (&$item) {
+            $item->setHit(true);
+        });
+        
+        // Create new item object for each uncached item.
+        array_walk($uncachedItems, function (&$value, $key) {
+            $value = $this->createItem($key);
+        });
+        
+        // Merge the cached and uncached items.
+        // NOTE: Use the keys as base to make sure the order 
+        //       of the array stays the same as the input keys.
+        return array_merge(
+            array_flip($keys),
+            $cachedItems,
+            $uncachedItems
+        );
     }
 
     /**
@@ -97,7 +122,7 @@ class Pool implements CacheItemPoolInterface
      *
      * @return static Invoked object.
      */
-    public function save(Item $item)
+    public function save(CacheItemInterface $item)
     {
         $this->repository->persist($item);
         return $this;
@@ -124,7 +149,7 @@ class Pool implements CacheItemPoolInterface
      */
     public function commit()
     {
-        $result = $this->repository->persist(array_values($this->deferred));
+        $result = $this->repository->persistAll(array_values($this->deferred));
         $this->deferred = [];
         
         return $result;
@@ -133,5 +158,10 @@ class Pool implements CacheItemPoolInterface
     public function __destruct()
     {
         $this->commit();
+    }
+    
+    protected function createItem($key)
+    {
+        return new Item($key, $this->defaultTtl);
     }
 }
