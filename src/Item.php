@@ -5,6 +5,8 @@ namespace JoeBengalen\Cache;
 use Psr\Cache\CacheItemInterface;
 use JoeBengalen\Cache\InvalidArgumentException;
 use DateTime;
+use DateTimeImmutable;
+use DateInterval;
 
 class Item implements CacheItemInterface
 {
@@ -12,31 +14,47 @@ class Item implements CacheItemInterface
      * @var string $hit 
      */
     protected $key;
-    
+
     /**
      * @var mixed $value 
      */
     protected $value;
-    
+
     /**
      * @var \DateTime|null $expiration 
      */
     protected $expiration;
     
     /**
+     * @var integer|null $defaultTtl Default time to life of an newly set value, null is infinite.
+     */
+    protected $defaultTtl;
+
+    /**
      * @var boolean $hit 
      */
     protected $hit;
-    
-    public function __construct($key, $ttl = null, $hit = false)
+
+    /**
+     * Create cache item
+     * 
+     * @param string $key Unique cache identifier
+     * @param integer|null $defaultTtl (optional) Default time to life of an newly set value, null is infinite.
+     * 
+     * @throws \JoeBengalen\Cache\InvalidArgumentException If $defaultTtl is not an integer or null.
+     */
+    public function __construct($key, $defaultTtl = null)
     {
         if (!$this->validKey($key)) {
             throw new InvalidArgumentException("Invalid key");
         }
         
-        $this->key = $key;
-        $this->setExpiration($ttl);
-        $this->setHit($hit);
+        if (!is_null($defaultTtl) && !is_integer($defaultTtl)) {
+            throw new InvalidArgumentException(printf("DefaultTtl must be of type integer or null, %s given.", [gettype($defaultTtl)]));
+        }
+
+        $this->key        = $key;
+        $this->defaultTtl = $defaultTtl;
     }
 
     /**
@@ -68,7 +86,7 @@ class Item implements CacheItemInterface
     {
         return $this->isHit() ? $this->value : null;
     }
-    
+
     /**
      * Returns the key for the current cache item.
      *
@@ -98,45 +116,88 @@ class Item implements CacheItemInterface
      * The $value argument may be any item that can be serialized by PHP.
      *
      * @param mixed $value Serializable Value to be stored.
+     * @param int|\DateTime $ttl
+     *   - If an integer is passed, it is interpreted as the number of seconds
+     *     after which the item MUST be considered expired.
+     *   - If a DateTime object is passed, it is interpreted as the point in
+     *     time after which the item MUST be considered expired.
+     *   - If no value is passed, a default value MAY be used. If none is set,
+     *     the value should be stored permanently or for as long as the
+     *     implementation allows.
      * 
      * @return static Invoked object.
      */
-    public function set($value)
-    {
+    public function set($value, $ttl = null)
+    {        
+        if (is_null($ttl)) {
+            $this->expiration = $this->defaultTtl;
+        }
+        
+        if (is_null($ttl)) {
+            $this->expiration = null; // TODO: Awkward situation, as this mst NOT be returned by getExpiration(). Fault in psr-6 spec!
+        } elseif (is_integer($ttl)) {
+            $this->expiresAfter($ttl);
+        } elseif ($ttl instanceof DateTime) {
+            $this->expiresAt($ttl);
+        } else {
+            throw new InvalidArgumentException(printf("Ttl must be of type \DateTime, integer or null, %s given.", [gettype($ttl)]));
+        }
+        
         $this->value = $value;
         
         return $this;
     }
 
     /**
-     * Sets the expiration for this cache item.
+     * Sets the expiration time this cache item.
      *
-     * @param int|\DateTime $ttl (optional)
-     *   - If an integer is passed, it is interpreted as the number of seconds
-     *     after which the item MUST be considered expired.
-     *   - If a DateTime object is passed, it is interpreted as the point in
-     *     time after which the item MUST be considered expired.
-     *   - If null is passed, a default value MAY be used. If none is set,
-     *     the value should be stored permanently or for as long as the
-     *     implementation allows.
+     * @param \DateTime|\DateTimeImmutable $expiration
+     *   The point in time after which the item MUST be considered expired.
+     *   If null is passed explicitly, a default value MAY be used. If none is set,
+     *   the value should be stored permanently or for as long as the
+     *   implementation allows.
      *
-     * @return static Invoked object.
+     * @return static Called object.
+     * 
+     * @throws \JoeBengalen\Cache\InvalidArgumentException If $expiration is not of type \DataTime or \DateTimeImmutable
      */
-    public function setExpiration($ttl = null)
+    public function expiresAt($expiration)
     {
-        if (is_null($ttl)) {
-            $this->expiration = null;
-        } elseif ($ttl instanceof DateTime) {
-            $this->expiration = $ttl;
-        } elseif (is_int($ttl)) {
-            $this->expiration = new DateTime("+{$ttl} seconds");
+        if ($expiration instanceof DateTime) {
+            $this->expiration = $expiration;
+        } elseif ($expiration instanceof DateTimeImmutable) {
+            $this->expiration = new \DateTime($expiration->getTimestamp()); // TODO: Test if this works ... (convert \DateTimeImmutable to \DateTime)
         } else {
-            throw new InvalidArgumentException(printf("ttl must either be null, \DateTime or an integer. A %s was given."), [gettype($ttl)]);
+            throw new InvalidArgumentException(printf("Expiration must be of type \DateTime or \DateTimeImmutable, %s given.", [gettype($expiration)]));
         }
         
         return $this;
     }
-    
+
+    /**
+     * Sets the expiration time this cache item.
+     *
+     * @param int|\DateInterval $time
+     *   The period of time from the present after which the item MUST be considered
+     *   expired. An integer parameter is understood to be the time in seconds until
+     *   expiration.
+     *
+     * @return static Called object.
+     */
+    public function expiresAfter($time)
+    {
+        if (is_integer($time)) {
+            $this->expiration = new DateTime("+ {$time} seconds");
+        } elseif ($time instanceof DateInterval) {
+            $now = new \DateTime('now');
+            $this->expiration = $now->add($time);
+        } else {
+            throw new InvalidArgumentException(printf("Time must be of type integer or \DateInterval, %s given.", [gettype($time)]));
+        }
+        
+        return $this;
+    }
+
     /**
      * Set if there was a hit or not
      * 
@@ -149,14 +210,14 @@ class Item implements CacheItemInterface
     public function setHit($hit)
     {
         if (!is_bool($hit)) {
-            throw new InvalidArgumentException(printf("hit must be boolean. A %s was given.", [gettype($hit)]));
+            throw new InvalidArgumentException(printf("hit must be boolean, %s was given.", [gettype($hit)]));
         }
-        
+
         $this->hit = $hit;
-        
+
         return $this;
     }
-    
+
     /**
      * Check if the key is valid.
      * 
@@ -166,6 +227,7 @@ class Item implements CacheItemInterface
      */
     protected function validKey($key)
     {
+        // TODO: Validate string
         return is_string($key);
     }
 }
