@@ -2,9 +2,8 @@
 
 namespace JoeBengalen\Cache\Repository;
 
-use Psr\Cache\CacheItemInterface;
+use JoeBengalen\Cache\Item;
 
-// api: contains, fetch, persist, delete and clear. And xxAll for multiple items at once, except for the latter.
 interface RepositoryInterface
 {
     // key: string, return:boolean
@@ -20,7 +19,7 @@ interface RepositoryInterface
     public function fetchAll(array $keys);
     
     // return: boolean
-    public function store(CacheItemInterface $item);
+    public function store(Item $item);
     
     // item: Item[], return: boolean
     public function storeAll(array $items);

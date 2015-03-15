@@ -4,7 +4,6 @@ namespace JoeBengalen\Cache\Repository;
 
 use JoeBengalen\Cache\Repository\RepositoryInterface;
 use JoeBengalen\Cache\Item;
-use Psr\Cache\CacheItemInterface;
 
 class ArrayRepository implements RepositoryInterface
 {
