@@ -138,9 +138,15 @@ class Pool implements CacheItemPoolInterface
      * @param \JoeBengalen\Cache\Item $item Cache item to save.
      *
      * @return static Invoked object.
+     * 
+     * @throws \JoeBengalen\Cache\InvalidArgumentException If $item is not \JoeBengalen\Cache\Item.
      */
     public function save(CacheItemInterface $item)
     {
+        if (!$item instanceof Item) {
+            throw new InvalidArgumentException(printf("Item must be \JoeBengalen\Cache\Item, %s given.", [gettype($item)]));
+        }
+        
         $item->markCached();
         $this->repository->store($item);
         return $this;
@@ -152,9 +158,15 @@ class Pool implements CacheItemPoolInterface
      * @param \JoeBengalen\Cache\Item $item Cache item to save.
      *
      * @return static Invoked object.
+     * 
+     * @throws \JoeBengalen\Cache\InvalidArgumentException If $item is not \JoeBengalen\Cache\Item.
      */
     public function saveDeferred(CacheItemInterface $item)
     {
+        if (!$item instanceof Item) {
+            throw new InvalidArgumentException(printf("Item must be \JoeBengalen\Cache\Item, %s given.", [gettype($item)]));
+        }
+        
         $this->deferred[$item->getKey()] = $item;
         
         return $this;
