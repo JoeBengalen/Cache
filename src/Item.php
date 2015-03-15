@@ -8,6 +8,9 @@ use DateTime;
 use DateTimeImmutable;
 use DateInterval;
 
+/**
+ * Cache pool item.
+ */
 class Item implements CacheItemInterface
 {
     /**

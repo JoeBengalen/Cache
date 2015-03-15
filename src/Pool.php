@@ -4,10 +4,13 @@ namespace JoeBengalen\Cache;
 
 use JoeBengalen\Cache\Item;
 use JoeBengalen\Cache\Repository\RepositoryInterface;
+use JoeBengalen\Cache\InvalidArgumentException;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
-use Psr\Cache\CacheException;
 
+/**
+ * Cache pool.
+ */
 class Pool implements CacheItemPoolInterface
 {
     /**
@@ -15,14 +18,33 @@ class Pool implements CacheItemPoolInterface
      */
     protected $repository;
     
-    protected $defaultTtl = 3600; // 1 hour
+    /**
+     * @var integer|null $defaultTtl Default time to live of an item in seconds. Null means it does not expire.
+     */
+    protected $defaultTtl;
     
+    /**
+     * @var \JoeBengalen\Cache\Item[] Deferred items. 
+     */
     protected $deferred = [];
 
-
-    public function __construct(RepositoryInterface $repository)
+    /**
+     * Create cache pool.
+     * 
+     * @param \JoeBengalen\Cache\Repository\RepositoryInterface $repository Resository to store the items.
+     * @param integer|null                                      $defaultTtl Default time to live of an item in seconds.
+     *                                                                      Null means it does not expire.
+     * 
+     * @throws \JoeBengalen\Cache\InvalidArgumentException If the $defaultTtl is not integer or null.
+     */
+    public function __construct(RepositoryInterface $repository, $defaultTtl = 3600)
     {
+        if (!is_null($defaultTtl) && !is_integer($defaultTtl)) {
+            throw new InvalidArgumentException(printf("DefaultTtl must be integer, %s given.", [gettype($defaultTtl)]));
+        }
+        
         $this->repository = $repository;
+        $this->defaultTtl = $defaultTtl;
     }
     
     /**
@@ -32,7 +54,7 @@ class Pool implements CacheItemPoolInterface
      * 
      * @return \JoeBengalen\Cache\Item Corresponding Cache Item.
      * 
-     * @throws \JoeBengalen\Cache\InvalidArgumentException If the $key is not a legal value
+     * @throws \JoeBengalen\Cache\InvalidArgumentException If the $key is an illegal key
      */
     public function getItem($key)
     {
@@ -56,6 +78,8 @@ class Pool implements CacheItemPoolInterface
      * 
      * @return \JoeBengalen\Cache\Item[] List of Cache Items keyed by the cache keys of each item.
      *                                   If no keys are specified then an empty array will be returned.
+     * 
+     * @throws \JoeBengalen\Cache\InvalidArgumentException If $keys contains an illegal key.
      */
     public function getItems(array $keys = [])
     {
@@ -153,11 +177,25 @@ class Pool implements CacheItemPoolInterface
         return $result;
     }
     
+    /**
+     * Destruct object.
+     * 
+     * Make sure all deferred items are saved.
+     */
     public function __destruct()
     {
         $this->commit();
     }
     
+    /**
+     * Get a Item instance.
+     * 
+     * @param string $key Key of item object to create.
+     * 
+     * @return \JoeBengalen\Cache\Item Created item object.
+     * 
+     * @throws \JoeBengalen\Cache\InvalidArgumentException If the $key is an illegal key
+     */
     protected function createItem($key)
     {
         return new Item($key, $this->defaultTtl);
