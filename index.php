@@ -21,6 +21,10 @@ $pool->save($item);
 // Note that the order of keys is the same as requested.
 var_dump($pool->getItems(['test1', 'test2', 'test3']));
 
+// All contain invalid keys!
+//$pool->getItems(['d{mmy', 'd}mmy', 'd(mmy', 'd)mmy', 'd/mmy', 'd\mmy', ]);
+
+
 /**
  * Gets a list of available widgets.
  *
