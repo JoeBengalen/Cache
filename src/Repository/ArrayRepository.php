@@ -71,14 +71,12 @@ class ArrayRepository implements RepositoryInterface
         return $items;
     }
     
-    // return:boolean
-    
     /**
      * Cache item.
      * 
      * @param \JoeBengalen\Cache\Item $item Item to cache.
      * 
-     * @return boolean True
+     * @return boolean True.
      */
     public function store(Item $item)
     {
@@ -87,13 +85,12 @@ class ArrayRepository implements RepositoryInterface
         return true;
     }
     
-    // Item[] list of items
-    
     /**
      * Cache multiple items.
      * 
-     * @param array $items
-     * @return boolean
+     * @param string[] $items Indexed array of keys.
+     * 
+     * @return boolean True.
      */
     public function storeAll(array $items)
     {
@@ -104,7 +101,13 @@ class ArrayRepository implements RepositoryInterface
         return true;
     }
     
-    // keys:string
+    /**
+     * Delete cached item.
+     * 
+     * @param string $key Key of the item to delete.
+     * 
+     * @return boolean True.
+     */
     public function delete($key)
     {
         unset($this->data[$key]);
@@ -112,7 +115,13 @@ class ArrayRepository implements RepositoryInterface
         return true;
     }
     
-    // keys:string[]
+    /**
+     * Delete multiple cached items.
+     * 
+     * @param string[] $keys Indexed array or keys.
+     * 
+     * @return boolean True.
+     */
     public function deleteAll(array $keys)
     {
         foreach ($keys as $key) {
@@ -122,7 +131,11 @@ class ArrayRepository implements RepositoryInterface
         return true;
     }
     
-    // return:boolean
+    /**
+     * Clear all cached data.
+     * 
+     * @return boolean True.
+     */
     public function clear()
     {
         $this->data = [];
