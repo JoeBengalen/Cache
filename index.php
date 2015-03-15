@@ -15,6 +15,7 @@ $pool = new Pool(new ArrayRepository);
 
 $item = $pool->getItem('test2');
 $item->set('some value');
+//$item->expiresAt(new \DateTimeImmutable('now'));
 $pool->save($item);
 
 // Note that the order of keys is the same as requested.

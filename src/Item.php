@@ -143,9 +143,9 @@ class Item implements CacheItemInterface
      * @return static Invoked object.
      */
     public function set($value, $ttl = null)
-    {        
+    {
         if (is_null($ttl)) {
-            $this->expiration = $this->defaultTtl;
+            $ttl = $this->defaultTtl;
         }
         
         if (is_null($ttl)) {
@@ -180,8 +180,8 @@ class Item implements CacheItemInterface
     {
         if ($expiration instanceof DateTime) {
             $this->expiration = $expiration;
-        } elseif ($expiration instanceof DateTimeImmutable) {
-            $this->expiration = new \DateTime($expiration->getTimestamp()); // TODO: Test if this works ... (convert \DateTimeImmutable to \DateTime)
+        } elseif ($expiration instanceof DateTimeImmutable) {            
+            $this->expiration = (new DateTime())->setTimestamp($expiration->getTimestamp());
         } else {
             throw new InvalidArgumentException(printf("Expiration must be of type \DateTime or \DateTimeImmutable, %s given.", [gettype($expiration)]));
         }
