@@ -231,7 +231,8 @@ class Item implements CacheItemInterface
      */
     protected function validKey($key)
     {
-        // TODO: Validate string
-        return is_string($key);
+        // TODO: how to check for those characters
+        return is_string($key); // && false === strpos($key, '{}()/\@:');
+        //return preg_match("/({}\(\)\/\\\)/", $key) === 1;
     }
 }

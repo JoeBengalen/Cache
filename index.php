@@ -19,7 +19,6 @@ $pool->save($item);
 
 // Note that the order of keys is the same as requested.
 var_dump($pool->getItems(['test1', 'test2', 'test3']));
-var_dump($pool->getItems());
 
 /**
  * Gets a list of available widgets.

@@ -3,19 +3,35 @@
 namespace JoeBengalen\Cache\Repository;
 
 use JoeBengalen\Cache\Repository\RepositoryInterface;
+use JoeBengalen\Cache\Item;
 use Psr\Cache\CacheItemInterface;
 
 class ArrayRepository implements RepositoryInterface
 {
+    /**
+     * @var \JoeBengalen\Cache\Item[] Cached items.
+     */
     protected $data = [];
-    
-    // key: string, return:boolean
+        
+    /**
+     * Check if cache repository contains cache for key.
+     * 
+     * @param string $key Key to check
+     * 
+     * @return boolean True if cache is found for key, false otherwise.
+     */
     public function contains($key)
     {
         return isset($this->data[$key]);
     }
-    
-    // key: string[], return: array as [key => boolean]
+        
+    /**
+     * Check if the repository contains cache for each key.
+     * 
+     * @param string[] $keys Indexed array of keys
+     * 
+     * @return array Associative array with booleans linked to the keys. Boolean true if cache if found, false otherwise.
+     */
     public function containsAll(array $keys)
     {
         $result = [];
@@ -25,14 +41,26 @@ class ArrayRepository implements RepositoryInterface
         
         return $result;
     }
-    
-    // key:string, return:Item|null
+        
+    /**
+     * Fetch cached item.
+     * 
+     * @param string $key Key of the item to fetch.
+     * 
+     * @return \JoeBengalen\Cache\Item|null Cache item if found for key, null otherwise.
+     */
     public function fetch($key)
     {
         return $this->contains($key) ? $this->data[$key] : null;
     }
-    
-    // key:string[], return:array as [key => Item|null]
+        
+    /**
+     * Fetch multiple cached items.
+     * 
+     * @param string[] $keys Indexed array of keys.
+     * 
+     * @return array Associative array with \JoeBengalen\Cache\Item or null linked to the keys. Null if no cached item was found for key.
+     */
     public function fetchAll(array $keys)
     {
         $items = [];
@@ -44,7 +72,15 @@ class ArrayRepository implements RepositoryInterface
     }
     
     // return:boolean
-    public function persist(CacheItemInterface $item)
+    
+    /**
+     * Cache item.
+     * 
+     * @param \JoeBengalen\Cache\Item $item Item to cache.
+     * 
+     * @return boolean True
+     */
+    public function store(Item $item)
     {
         $this->data[$item->getKey()] = $item;
         
@@ -52,10 +88,17 @@ class ArrayRepository implements RepositoryInterface
     }
     
     // Item[] list of items
-    public function persistAll(array $items)
+    
+    /**
+     * Cache multiple items.
+     * 
+     * @param array $items
+     * @return boolean
+     */
+    public function storeAll(array $items)
     {
         foreach ($items as $item) {
-            $this->persist($item);
+            $this->store($item);
         }
         
         return true;

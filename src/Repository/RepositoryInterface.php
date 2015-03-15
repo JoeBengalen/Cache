@@ -20,10 +20,10 @@ interface RepositoryInterface
     public function fetchAll(array $keys);
     
     // return: boolean
-    public function persist(CacheItemInterface $item);
+    public function store(CacheItemInterface $item);
     
     // item: Item[], return: boolean
-    public function persistAll(array $items);
+    public function storeAll(array $items);
     
     // key: string, return: boolean
     public function delete($key);

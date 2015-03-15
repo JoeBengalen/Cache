@@ -118,7 +118,7 @@ class Pool implements CacheItemPoolInterface
     public function save(CacheItemInterface $item)
     {
         $item->markCached();
-        $this->repository->persist($item);
+        $this->repository->store($item);
         return $this;
     }
 
@@ -147,7 +147,7 @@ class Pool implements CacheItemPoolInterface
         array_walk($items, function (&$item) {
             $item->markCached();
         });
-        $result = $this->repository->persistAll($items);
+        $result = $this->repository->storeAll($items);
         $this->deferred = [];
         
         return $result;
