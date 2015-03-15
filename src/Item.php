@@ -31,9 +31,9 @@ class Item implements CacheItemInterface
     protected $defaultTtl;
 
     /**
-     * @var boolean $hit 
+     * @var boolean $cached Indicates if the item was saved in cache or not. 
      */
-    protected $hit;
+    protected $cached = false;
 
     /**
      * Create cache item
@@ -56,6 +56,18 @@ class Item implements CacheItemInterface
         $this->key        = $key;
         $this->defaultTtl = $defaultTtl;
     }
+    
+    /**
+     * Check if the item is expired.
+     * 
+     * @return boolean True if item is expired, false otherwise.
+     */
+    public function isExpired()
+    {
+        $expiration = $this->getExpiration();
+        $now        = new \DateTime('now');
+        return !is_null($expiration) && $expiration > $now;
+    }
 
     /**
      * Confirms if the cache item lookup resulted in a cache hit.
@@ -64,7 +76,7 @@ class Item implements CacheItemInterface
      */
     public function isHit()
     {
-        return $this->hit;
+        return $this->exists() && !$this->isExpired();
     }
 
     /**
@@ -74,7 +86,7 @@ class Item implements CacheItemInterface
      */
     public function exists()
     {
-        return $this->isHit();
+        return $this->cached;
     }
 
     /**
@@ -199,21 +211,13 @@ class Item implements CacheItemInterface
     }
 
     /**
-     * Set if there was a hit or not
-     * 
-     * @param boolean $hit
+     * Mark the item as cached
      * 
      * @return static Invoked object.
-     * 
-     * @throws \JoeBengalen\Cache\InvalidArgumentException If $hit was not a boolean.
      */
-    public function setHit($hit)
+    public function markCached()
     {
-        if (!is_bool($hit)) {
-            throw new InvalidArgumentException(printf("hit must be boolean, %s was given.", [gettype($hit)]));
-        }
-
-        $this->hit = $hit;
+        $this->cached = true;
 
         return $this;
     }

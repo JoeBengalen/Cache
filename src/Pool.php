@@ -41,9 +41,7 @@ class Pool implements CacheItemPoolInterface
         }
         
         if ($this->repository->contains($key)) {
-            $item = $this->repository->fetch($key);
-            $item->setHit(true);
-            return $item;
+            return $this->repository->fetch($key);
         }
         
         return $this->createItem($key);
@@ -70,11 +68,6 @@ class Pool implements CacheItemPoolInterface
         $cachedItems    = $this->repository->fetchAll($cachedKeys);
         $uncachedItems  = array_filter($containsResult, function ($contains) {
             return !$contains;
-        });
-        
-        // Set hit to true on each cached item.
-        array_walk($cachedItems, function (&$item) {
-            $item->setHit(true);
         });
         
         // Create new item object for each uncached item.
@@ -124,6 +117,7 @@ class Pool implements CacheItemPoolInterface
      */
     public function save(CacheItemInterface $item)
     {
+        $item->markCached();
         $this->repository->persist($item);
         return $this;
     }
@@ -149,7 +143,11 @@ class Pool implements CacheItemPoolInterface
      */
     public function commit()
     {
-        $result = $this->repository->persistAll(array_values($this->deferred));
+        $items = array_values($this->deferred);
+        array_walk($items, function (&$item) {
+            $item->markCached();
+        });
+        $result = $this->repository->persistAll($items);
         $this->deferred = [];
         
         return $result;
