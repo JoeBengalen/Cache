@@ -55,7 +55,7 @@ class Item implements CacheItemInterface
         if (!is_null($defaultTtl) && !is_integer($defaultTtl)) {
             throw new InvalidArgumentException(printf("DefaultTtl must be of type integer or null, %s given.", [gettype($defaultTtl)]));
         }
-
+        
         $this->key        = $key;
         $this->defaultTtl = $defaultTtl;
     }
@@ -69,7 +69,8 @@ class Item implements CacheItemInterface
     {
         $expiration = $this->getExpiration();
         $now        = new \DateTime('now');
-        return !is_null($expiration) && $expiration > $now;
+        
+        return !is_null($expiration) && $expiration < $now;
     }
 
     /**
