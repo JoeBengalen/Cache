@@ -1,7 +1,7 @@
 <?php
 
 use JoeBengalen\Cache\Pool;
-use JoeBengalen\Cache\Repository\ArrayRepository;
+use JoeBengalen\Cache\Repository\SessionRepository;
 
 error_reporting(-1);
 ini_set('display_errors', 1);
@@ -11,19 +11,20 @@ date_default_timezone_set('Europe/Amsterdam');
 
 require_once 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
-$pool = new Pool(new ArrayRepository);
+$pool = new Pool(new SessionRepository);
 
 $item = $pool->getItem('test2');
-$item->set('some value');
-//$item->expiresAt(new \DateTimeImmutable('now'));
-$pool->save($item);
+if (!$item->isHit()) {
+    $item->set('some value', 5);
+    $pool->save($item);
+}
+
 
 // Note that the order of keys is the same as requested.
 var_dump($pool->getItems(['test1', 'test2', 'test3']));
 
 // All contain invalid keys!
 //$pool->getItems(['d{mmy', 'd}mmy', 'd(mmy', 'd)mmy', 'd/mmy', 'd\mmy', ]);
-
 
 /**
  * Gets a list of available widgets.
