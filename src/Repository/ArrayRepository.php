@@ -44,13 +44,15 @@ class ArrayRepository implements RepositoryInterface
     /**
      * Fetch cached item.
      * 
+     * The cached item is cloned to break the reference.
+     * 
      * @param string $key Key of the item to fetch.
      * 
      * @return \JoeBengalen\Cache\Item|null Cache item if found for key, null otherwise.
      */
     public function fetch($key)
     {
-        return $this->contains($key) ? $this->data[$key] : null;
+        return $this->contains($key) ? clone $this->data[$key] : null;
     }
         
     /**
