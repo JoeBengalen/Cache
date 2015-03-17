@@ -1,7 +1,7 @@
 <?php
 
 use JoeBengalen\Cache\Pool;
-use JoeBengalen\Cache\Repository\SessionRepository;
+use JoeBengalen\Cache\Repository;
 
 error_reporting(-1);
 ini_set('display_errors', 1);
@@ -11,7 +11,10 @@ date_default_timezone_set('Europe/Amsterdam');
 
 require_once 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
-$pool = new Pool(new SessionRepository);
+$repo = new Repository\FileRepository(__DIR__);
+//$repo = new Repository\SessionRepository();
+
+$pool = new Pool($repo);
 
 $item = $pool->getItem('test2');
 if (!$item->isHit()) {
@@ -21,7 +24,7 @@ if (!$item->isHit()) {
 
 
 // Note that the order of keys is the same as requested.
-var_dump($pool->getItems(['test1', 'test2', 'test3']));
+d($pool->getItems(['test1', 'test2', 'test3']));
 
 // All contain invalid keys!
 //$pool->getItems(['d{mmy', 'd}mmy', 'd(mmy', 'd)mmy', 'd/mmy', 'd\mmy', ]);
@@ -114,4 +117,6 @@ function load_widgets(array $ids)
 
     return $widgets;
 }
+
+function d() { call_user_func_array('var_dump', func_get_args()); }
 
