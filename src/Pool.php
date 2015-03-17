@@ -40,7 +40,7 @@ class Pool implements CacheItemPoolInterface
     public function __construct(RepositoryInterface $repository, $defaultTtl = 3600)
     {
         if (!is_null($defaultTtl) && !is_integer($defaultTtl)) {
-            throw new InvalidArgumentException(printf("DefaultTtl must be integer, %s given.", [gettype($defaultTtl)]));
+            throw new InvalidArgumentException(printf("DefaultTtl must be integer, %s given.", gettype($defaultTtl)));
         }
         
         $this->repository = $repository;
@@ -128,7 +128,7 @@ class Pool implements CacheItemPoolInterface
      */
     public function deleteItems(array $keys)
     {
-        $this->repository->delete($keys);
+        $this->repository->deleteAll($keys);
         return $this;
     }
 
@@ -144,7 +144,7 @@ class Pool implements CacheItemPoolInterface
     public function save(CacheItemInterface $item)
     {
         if (!$item instanceof Item) {
-            throw new InvalidArgumentException(printf("Item must be \JoeBengalen\Cache\Item, %s given.", [gettype($item)]));
+            throw new InvalidArgumentException(printf("Item must be \JoeBengalen\Cache\Item, %s given.", gettype($item)));
         }
         
         $item->markCached();
@@ -164,7 +164,7 @@ class Pool implements CacheItemPoolInterface
     public function saveDeferred(CacheItemInterface $item)
     {
         if (!$item instanceof Item) {
-            throw new InvalidArgumentException(printf("Item must be \JoeBengalen\Cache\Item, %s given.", [gettype($item)]));
+            throw new InvalidArgumentException(printf("Item must be \JoeBengalen\Cache\Item, %s given.", gettype($item)));
         }
         
         $this->deferred[$item->getKey()] = $item;

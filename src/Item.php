@@ -53,7 +53,7 @@ class Item implements CacheItemInterface
         }
         
         if (!is_null($defaultTtl) && !is_integer($defaultTtl)) {
-            throw new InvalidArgumentException(printf("DefaultTtl must be of type integer or null, %s given.", [gettype($defaultTtl)]));
+            throw new InvalidArgumentException(printf("DefaultTtl must be of type integer or null, %s given.", gettype($defaultTtl)));
         }
         
         $this->key        = $key;
@@ -156,7 +156,7 @@ class Item implements CacheItemInterface
         } elseif ($ttl instanceof DateTime) {
             $this->expiresAt($ttl);
         } else {
-            throw new InvalidArgumentException(printf("Ttl must be of type \DateTime, integer or null, %s given.", [gettype($ttl)]));
+            throw new InvalidArgumentException(printf("Ttl must be of type \DateTime, integer or null, %s given.", gettype($ttl)));
         }
         
         $this->value = $value;
@@ -184,7 +184,7 @@ class Item implements CacheItemInterface
         } elseif ($expiration instanceof DateTimeImmutable) {            
             $this->expiration = (new DateTime())->setTimestamp($expiration->getTimestamp());
         } else {
-            throw new InvalidArgumentException(printf("Expiration must be of type \DateTime or \DateTimeImmutable, %s given.", [gettype($expiration)]));
+            throw new InvalidArgumentException(printf("Expiration must be of type \DateTime or \DateTimeImmutable, %s given.", gettype($expiration)));
         }
         
         return $this;
@@ -208,7 +208,7 @@ class Item implements CacheItemInterface
             $now = new \DateTime('now');
             $this->expiration = $now->add($time);
         } else {
-            throw new InvalidArgumentException(printf("Time must be of type integer or \DateInterval, %s given.", [gettype($time)]));
+            throw new InvalidArgumentException(printf("Time must be of type integer or \DateInterval, %s given.", gettype($time)));
         }
         
         return $this;
