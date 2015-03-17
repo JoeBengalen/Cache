@@ -67,10 +67,7 @@ class Item implements CacheItemInterface
      */
     public function isExpired()
     {
-        $expiration = $this->getExpiration();
-        $now        = new \DateTime('now');
-        
-        return !is_null($expiration) && $expiration < $now;
+        return $this->getExpiration() <= new \DateTime('now');
     }
 
     /**
@@ -116,14 +113,14 @@ class Item implements CacheItemInterface
     /**
      * Returns the expiration time of a not-yet-expired cache item.
      *
-     * If this cache item is a Cache Miss, this method MAY return the time at
-     * which the item expired or the current time if that is not available.
+     * If the cache item never expires a \DateTime of 1 year in the future 
+     * will be returned, as the return value MUST be a \DateTime object.
      *
-     * @return \DateTime|null Timestamp at which this cache item will expire, null means it will not expire.
+     * @return \DateTime Timestamp at which this cache item will expire.
      */
     public function getExpiration()
     {
-        return $this->expiration;
+        return !is_null($this->expiration) ? $this->expiration : new DateTime('+ 1 year');
     }
 
     /**
