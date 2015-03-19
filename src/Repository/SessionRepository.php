@@ -26,6 +26,16 @@ class SessionRepository implements RepositoryInterface
         
         $this->data = &$_SESSION[$sessionKey];
     }
+    
+    /**
+     * Start a new PHP session if none is started.
+     */
+    public function startSession()
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+    }
         
     /**
      * Check if cache repository contains cache for key.
@@ -157,16 +167,6 @@ class SessionRepository implements RepositoryInterface
         $this->data = [];
         
         return true;
-    }
-    
-    /**
-     * Start a new PHP session if none is started.
-     */
-    protected function startSession()
-    {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
     }
 }
 
