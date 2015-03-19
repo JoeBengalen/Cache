@@ -4,6 +4,7 @@ namespace JoeBengalen\Cache;
 
 use JoeBengalen\Cache\Item;
 use JoeBengalen\Cache\Repository\RepositoryInterface;
+use JoeBengalen\Cache\Repository\RepositoryAllInterface;
 use JoeBengalen\Cache\InvalidArgumentException;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -83,30 +84,15 @@ class Pool implements CacheItemPoolInterface
      */
     public function getItems(array $keys = [])
     {
-        // Method uses a complecated logic to make sure only the containsAll and fetchAll 
-        // repository function are called, as that may improve performance over multiple 
-        // contains and fetch calls.
-        
-        $containsResult = $this->repository->containsAll($keys);
-        $cachedKeys     = array_keys(array_filter($containsResult));
-        $cachedItems    = $this->repository->fetchAll($cachedKeys);
-        $uncachedItems  = array_filter($containsResult, function ($contains) {
-            return !$contains;
-        });
-        
-        // Create new item object for each uncached item.
-        array_walk($uncachedItems, function (&$value, $key) {
-            $value = $this->createItem($key);
-        });
-        
-        // Merge the cached and uncached items.
-        // NOTE: Use the keys as base to make sure the order 
-        //       of the array stays the same as the input keys.
-        return array_merge(
-            array_flip($keys),
-            $cachedItems,
-            $uncachedItems
-        );
+        if ($this->repository instanceof RepositoryAllInterface) {
+            return $this->getItemsUsingAll($keys);
+        } else {
+            $items = [];
+            foreach ($keys as $key) {
+                $items[$key] = $this->getItem($key);
+            }
+            return $items;
+        }
     }
 
     /**
@@ -128,7 +114,12 @@ class Pool implements CacheItemPoolInterface
      */
     public function deleteItems(array $keys)
     {
-        $this->repository->deleteAll($keys);
+        if ($this->repository instanceof RepositoryAllInterface) {
+             $this->repository->deleteAll($keys);
+        } else {
+            $this->iterationCallMethod($keys, 'delete');
+        }
+        
         return $this;
     }
 
@@ -180,10 +171,17 @@ class Pool implements CacheItemPoolInterface
     public function commit()
     {
         $items = array_values($this->deferred);
-        array_walk($items, function (&$item) {
+        
+        array_walk($items, function ($item) {
             $item->markCached();
         });
-        $result = $this->repository->storeAll($items);
+        
+        if ($this->repository instanceof RepositoryAllInterface) {
+            $result = $this->repository->storeAll($items);
+        } else {
+            $result = $this->iterationCallMethod($items, 'store');
+        }
+        
         $this->deferred = [];
         
         return $result;
@@ -211,5 +209,47 @@ class Pool implements CacheItemPoolInterface
     protected function createItem($key)
     {
         return new Item($key, $this->defaultTtl);
+    }
+    
+    protected function iterationCallMethod(array $list, $method)
+    {
+        $result = true;
+        
+        foreach ($list as $item) {
+            $result = ($this->repository->{$method}($item)) ? $result : false;
+        }
+        
+        return $result;
+    }
+    
+    protected function getItemsUsingAll(array $keys)
+    {
+        // Method uses a complecated logic to make sure only the containsAll and fetchAll 
+        // repository function are called, as that may improve performance over multiple 
+        // contains and fetch calls.
+        
+        // TODO: Also check deferred!
+        
+        $containsResult = $this->repository->containsAll($keys);
+        $cachedKeys     = array_keys(array_filter($containsResult));
+        $cachedItems    = $this->repository->fetchAll($cachedKeys);
+
+        $uncachedItems  = array_filter($containsResult, function ($contains) {
+            return !$contains;
+        });
+
+        // Create new item object for each uncached item.
+        array_walk($uncachedItems, function (&$value, $key) {
+            $value = $this->createItem($key);
+        });
+
+        // Merge the cached and uncached items.
+        // NOTE: Use the keys as base to make sure the order 
+        //       of the array stays the same as the input keys.
+        return array_merge(
+            array_flip($keys),
+            $cachedItems,
+            $uncachedItems
+        );
     }
 }
