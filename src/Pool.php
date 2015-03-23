@@ -228,9 +228,17 @@ class Pool implements CacheItemPoolInterface
         // repository function are called, as that may improve performance over multiple 
         // contains and fetch calls.
         
-        // TODO: Also check deferred!
-        
-        $containsResult = $this->repository->containsAll($keys);
+        $deferredItems  = [];
+        $undeferredKeys = [];
+        foreach ($keys as $key) {
+            if (isset($this->deferred[$key])) {
+                $deferredItems[$key] = $this->deferred[$key];
+            } else {
+                $undeferredKeys[] = $key;
+            }
+        }
+                
+        $containsResult = $this->repository->containsAll($undeferredKeys);
         $cachedKeys     = array_keys(array_filter($containsResult));
         $cachedItems    = $this->repository->fetchAll($cachedKeys);
 
@@ -248,6 +256,7 @@ class Pool implements CacheItemPoolInterface
         //       of the array stays the same as the input keys.
         return array_merge(
             array_flip($keys),
+            $deferredItems,
             $cachedItems,
             $uncachedItems
         );
