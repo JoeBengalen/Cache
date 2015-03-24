@@ -93,7 +93,7 @@ class Item implements CacheItemInterface
     /**
      * Retrieves the value of the item from the cache associated with this objects key.
      *
-     * @return mixed Value corresponding to this cache item's key, or null if no hit.
+     * @return mixed|null Value corresponding to this cache item's key, or null if no hit.
      */
     public function get()
     {
@@ -179,7 +179,8 @@ class Item implements CacheItemInterface
         if ($expiration instanceof DateTime) {
             $this->expiration = $expiration;
         } elseif ($expiration instanceof DateTimeImmutable) {            
-            $this->expiration = (new DateTime())->setTimestamp($expiration->getTimestamp());
+            $this->expiration = new DateTime();
+            $this->expiration->setTimestamp($expiration->getTimestamp());
         } else {
             throw new InvalidArgumentException(printf("Expiration must be of type \DateTime or \DateTimeImmutable, %s given.", gettype($expiration)));
         }
@@ -200,7 +201,7 @@ class Item implements CacheItemInterface
     public function expiresAfter($time)
     {
         if (is_integer($time)) {
-            $this->expiration = new DateTime("+ {$time} seconds");
+            $this->expiration = new DateTime("{$time} seconds");
         } elseif ($time instanceof DateInterval) {
             $now = new \DateTime('now');
             $this->expiration = $now->add($time);
