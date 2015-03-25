@@ -2,10 +2,10 @@
 
 namespace JoeBengalen\Cache\Repository;
 
-use JoeBengalen\Cache\Repository\RepositoryInterface;
+use JoeBengalen\Cache\Repository\SimpleRepositoryInterface;
 use JoeBengalen\Cache\Item;
 
-class ArrayRepository implements RepositoryInterface
+class ArrayRepository implements SimpleRepositoryInterface
 {
     /**
      * @var \JoeBengalen\Cache\Item[] Cached items.
@@ -23,24 +23,7 @@ class ArrayRepository implements RepositoryInterface
     {
         return isset($this->data[$key]);
     }
-        
-    /**
-     * Check if the repository contains cache for each key.
-     * 
-     * @param string[] $keys Indexed array of keys
-     * 
-     * @return array Associative array with booleans linked to the keys. Boolean true if cache if found, false otherwise.
-     */
-    public function containsAll(array $keys)
-    {
-        $result = [];
-        foreach ($keys as $key) {
-            $result[$key] = $this->contains($key);
-        }
-        
-        return $result;
-    }
-        
+    
     /**
      * Fetch cached item.
      * 
@@ -54,23 +37,6 @@ class ArrayRepository implements RepositoryInterface
     {
         return $this->contains($key) ? clone $this->data[$key] : null;
     }
-        
-    /**
-     * Fetch multiple cached items.
-     * 
-     * @param string[] $keys Indexed array of keys.
-     * 
-     * @return array Associative array with \JoeBengalen\Cache\Item or null linked to the keys. Null if no cached item was found for key.
-     */
-    public function fetchAll(array $keys)
-    {
-        $items = [];
-        foreach ($keys as $key) {
-            $items[$key] = $this->fetch($key);
-        }
-        
-        return $items;
-    }
     
     /**
      * Cache item.
@@ -82,22 +48,6 @@ class ArrayRepository implements RepositoryInterface
     public function store(Item $item)
     {
         $this->data[$item->getKey()] = $item;
-        
-        return true;
-    }
-    
-    /**
-     * Cache multiple items.
-     * 
-     * @param string[] $items Indexed array of keys.
-     * 
-     * @return boolean True.
-     */
-    public function storeAll(array $items)
-    {
-        foreach ($items as $item) {
-            $this->store($item);
-        }
         
         return true;
     }
@@ -117,22 +67,6 @@ class ArrayRepository implements RepositoryInterface
     }
     
     /**
-     * Delete multiple cached items.
-     * 
-     * @param string[] $keys Indexed array or keys.
-     * 
-     * @return boolean True.
-     */
-    public function deleteAll(array $keys)
-    {
-        foreach ($keys as $key) {
-            $this->delete($key);
-        }
-        
-        return true;
-    }
-    
-    /**
      * Clear all cached data.
      * 
      * @return boolean True.
@@ -144,5 +78,3 @@ class ArrayRepository implements RepositoryInterface
         return true;
     }
 }
-
-
