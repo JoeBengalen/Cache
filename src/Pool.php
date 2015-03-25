@@ -4,6 +4,8 @@ namespace JoeBengalen\Cache;
 
 use JoeBengalen\Cache\Item;
 use JoeBengalen\Cache\Repository\RepositoryInterface;
+use JoeBengalen\Cache\Repository\SimpleRepositoryInterface;
+use JoeBengalen\Cache\Repository\SimpleRepositoryAdapter;
 use JoeBengalen\Cache\InvalidArgumentException;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -31,14 +33,26 @@ class Pool implements CacheItemPoolInterface
     /**
      * Create cache pool.
      * 
-     * @param \JoeBengalen\Cache\Repository\RepositoryInterface $repository Resository to store the items.
-     * @param integer|null                                      $defaultTtl Default time to live of an item in seconds.
-     *                                                                      Null means it does not expire.
+     * @param \JoeBengalen\Cache\Repository\RepositoryInterface|
+     *        \JoeBengalen\Cache\Repository\SimpleRepositoryInterface 
+     *                      $repository Resository to store the items in.
+     * @param integer|null  $defaultTtl Default time to live of an item in seconds.
+     *                                  Null means it does not expire.
      * 
+     * @throws \JoeBengalen\Cache\InvalidArgumentException If the $repository is not \JoeBengalen\Cache\Repository\RepositoryInterface 
+     *                                                     or \JoeBengalen\Cache\Repository\SimpleRepositoryInterface.
      * @throws \JoeBengalen\Cache\InvalidArgumentException If the $defaultTtl is not integer or null.
      */
-    public function __construct(RepositoryInterface $repository, $defaultTtl = 3600)
+    public function __construct($repository, $defaultTtl = 3600)
     {
+        if ($repository instanceof SimpleRepositoryInterface) {
+            $repository = new SimpleRepositoryAdapter($repository);
+        }
+        
+        if (!$repository instanceof RepositoryInterface) {
+            throw new InvalidArgumentException(printf("Repository must be \JoeBengalen\Cache\Repository\RepositoryInterface or \JoeBengalen\Cache\Repository\SimpleRepositoryInterface, %s given", gettype($repository)));
+        }
+        
         if (!is_null($defaultTtl) && !is_integer($defaultTtl)) {
             throw new InvalidArgumentException(printf("DefaultTtl must be integer, %s given.", gettype($defaultTtl)));
         }
