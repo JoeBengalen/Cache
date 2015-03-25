@@ -74,9 +74,11 @@ class ItemTest extends \PHPUnit_Framework_TestCase
     
     public function testExpiresAtDateTimeImmutable()
     {
-        $item = new Item('key');
-        $this->assertInstanceOf('\JoeBengalen\Cache\Item', $item->expiresAt(new DateTimeImmutable('10 seconds')));
-        $this->assertEquals(new DateTime('10 seconds'), $item->getExpiration());
+        if (version_compare(phpversion(), '5.5.0', '>=')) {
+            $item = new Item('key');
+            $this->assertInstanceOf('\JoeBengalen\Cache\Item', $item->expiresAt(new DateTimeImmutable('10 seconds')));
+            $this->assertEquals(new DateTime('10 seconds'), $item->getExpiration());
+        }
     }
     
     public function testExpiresAtInvalidDateTime()
