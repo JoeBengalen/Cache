@@ -1,0 +1,27 @@
+{
+    "name": "joebengalen/cache",
+    "type": "library",
+    "description": "Lightweight psr-6 cache library.",
+    "keywords": ["cache", "caching", "psr-6"],
+    "homepage": "https://github.com/JoeBengalen/Cache",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Martijn Wennink",
+            "email": "joebengalen@gmail.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/JoeBengalen/Cache/issues",
+        "source": "https://github.com/JoeBengalen/Cache"
+    },
+    "require": {
+        "php": ">=5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "JoeBengalen\\Cache\\": "src",
+            "Psr\\Cache\\": "psr-6"
+        }
+    }
+}
