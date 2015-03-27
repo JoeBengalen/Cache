@@ -194,9 +194,12 @@ class Pool implements CacheItemPoolInterface
     public function commit()
     {
         $items = array_values($this->deferred);
+        
+        /** @var $item \JoeBengalen\Cache\Item */
         array_walk($items, function (&$item) {
             $item->markCached();
         });
+        
         $result = $this->repository->storeAll($items);
         $this->deferred = [];
         
