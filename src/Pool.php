@@ -195,7 +195,8 @@ class Pool implements CacheItemPoolInterface
     {
         $items = array_values($this->deferred);
         
-        array_walk($items, function ( &$item) {
+        /** @var $item \JoeBengalen\Cache\Item */
+        array_walk($items, function (&$item) {
             $item->markCached();
         });
         
