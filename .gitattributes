@@ -1,14 +1,7 @@
-# Ignore docs
 README.md           export-ignore
 LICENSE.md          export-ignore
-
-# Ignore git files
 .gitattributes      export-ignore
 .gitignore          export-ignore
-
-# Ignore config files
 .travis.yml         export-ignore
 phpunit.xml.dist    export-ignore
-
-# Ignore unit tests
 tests               export-ignore
