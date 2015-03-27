@@ -1,5 +1,5 @@
 # Ignore docs
-README.md           export-ifnore
+README.md           export-ignore
 LICENSE.md          export-ignore
 
 # Ignore git files
