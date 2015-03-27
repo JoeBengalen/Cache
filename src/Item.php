@@ -147,7 +147,7 @@ class Item implements CacheItemInterface
         }
         
         if (is_null($ttl)) {
-            $this->expiration = null; // TODO: Awkward situation, as this mst NOT be returned by getExpiration(). Fault in psr-6 spec!
+            $this->expiration = null;
         } elseif (is_integer($ttl)) {
             $this->expiresAfter($ttl);
         } elseif ($ttl instanceof DateTime) {
