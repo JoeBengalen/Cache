@@ -233,10 +233,6 @@ class Item implements CacheItemInterface
      */
     protected function validKey($key)
     {
-        // TODO: Look at this, 
-        //       looks like there should be one less backslah, 
-        //       but for some reason PHP givens an error!                    
-        //return is_string($key) && preg_match("/[(){}\/\\]/", $key) === 0; 
         return is_string($key) && preg_match("/[(){}\/\\\]/", $key) === 0;
     }
 }
