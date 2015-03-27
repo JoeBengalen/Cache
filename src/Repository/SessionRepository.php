@@ -4,6 +4,7 @@ namespace JoeBengalen\Cache\Repository;
 
 use JoeBengalen\Cache\Repository\SimpleRepositoryInterface;
 use JoeBengalen\Cache\Item;
+use JoeBengalen\Cache\CacheException;
 
 /**
  * TODO: Update all docblocks!
@@ -19,22 +20,24 @@ class SessionRepository implements SimpleRepositoryInterface
      * Create session repository.
      * 
      * @param string $sessionKey Session key to use.
+     * 
+     * @throws \JoeBengalen\Cache\CacheException If PHP session is not active.
      */
     public function __construct($sessionKey = 'joebengalen.cache.pool')
     {
-        $this->startSession();
+        if (!$this->isSessionActive()) {
+            throw new CacheException('PHP session must be active.');
+        }
         
         $this->data = &$_SESSION[$sessionKey];
     }
     
     /**
-     * Start a new PHP session if none is started.
+     * Check if PHP session is active.
      */
-    public function startSession()
+    public function isSessionActive()
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
+        return session_status() === PHP_SESSION_ACTIVE;
     }
         
     /**
