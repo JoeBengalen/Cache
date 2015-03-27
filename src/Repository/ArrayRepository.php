@@ -11,7 +11,7 @@ class ArrayRepository implements SimpleRepositoryInterface
      * @var \JoeBengalen\Cache\Item[] $data Cached items.
      */
     protected $data = [];
-        
+    
     /**
      * Check if cache repository contains cache for key.
      * 
