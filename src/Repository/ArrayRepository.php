@@ -8,7 +8,7 @@ use JoeBengalen\Cache\Item;
 class ArrayRepository implements SimpleRepositoryInterface
 {
     /**
-     * @var \JoeBengalen\Cache\Item[] Cached items.
+     * @var \JoeBengalen\Cache\Item[] $data Cached items.
      */
     protected $data = [];
         
