@@ -2,12 +2,7 @@
 
 namespace JoeBengalen\Cache\Test;
 
-use JoeBengalen\Cache\CachePoolAwareTrait;
-
-class CachePoolAwareTraitObject
-{
-    use CachePoolAwareTrait;
-}
+use JoeBengalen\Cache\Test\CachePoolAwareObject;
 
 class CachePoolAwareTraitTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,12 +11,12 @@ class CachePoolAwareTraitTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->pool = $this->getMock('\Psr\Cache\CacheItemPoolInterface');
-        $this->object = new CachePoolAwareTraitObject();
+        $this->object = new CachePoolAwareObject();
     }
     
     public function testSetCachePoolInObject()
     {
-        $this->assertInstanceOf('\JoeBengalen\Cache\Test\CachePoolAwareTraitObject', $this->object->setCachePool($this->pool));
+        $this->assertInstanceOf('\JoeBengalen\Cache\Test\CachePoolAwareObject', $this->object->setCachePool($this->pool));
     }
     
     public function testGetCachePoolFromObject()
