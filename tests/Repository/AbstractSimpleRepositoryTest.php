@@ -11,13 +11,13 @@ abstract class AbstractSimpleRepositoryTest extends \PHPUnit_Framework_TestCase
         return $this->getMock('\JoeBengalen\Cache\Item', null, [$key]);
     }
     
-    public function testStoreItemInRepository()
+    public function testStoreItemIntoRepository()
     {
         $this->assertTrue($this->repository->store($this->createItem('key.store')));
         $this->assertTrue($this->repository->contains('key.store'));
     }
     
-    public function testContainsItemInRepository()
+    public function testRepositoryContainsItem()
     {
         $this->assertTrue($this->repository->store($this->createItem('key1')));
         $this->assertTrue($this->repository->contains('key1'));
