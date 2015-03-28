@@ -11,22 +11,29 @@ class CachePoolAwareTraitObject
 
 class CachePoolAwareTraitTest extends \PHPUnit_Framework_TestCase
 {
+    protected $object;
+    
     public function setUp()
     {
         $this->pool = $this->getMock('\Psr\Cache\CacheItemPoolInterface');
-        $this->obj = new CachePoolAwareTraitObject();
+        $this->object = new CachePoolAwareTraitObject();
     }
     
-    public function testSetGetCachePool()
+    public function testSetCachePoolInObject()
     {
-        $this->assertInstanceOf('\JoeBengalen\Cache\Test\CachePoolAwareTraitObject', $this->obj->setCachePool($this->pool));
-        $this->assertSame($this->pool, $this->obj->getCachePool());
+        $this->assertInstanceOf('\JoeBengalen\Cache\Test\CachePoolAwareTraitObject', $this->object->setCachePool($this->pool));
     }
     
-    public function testHasCachePool()
+    public function testGetCachePoolFromObject()
     {
-        $this->assertFalse($this->obj->hasCachePool());
-        $this->obj->setCachePool($this->pool);
-        $this->assertTrue($this->obj->hasCachePool());
+        $this->object->setCachePool($this->pool);
+        $this->assertSame($this->pool, $this->object->getCachePool());
+    }
+    
+    public function testCheckIfObjectHasCachePool()
+    {
+        $this->assertFalse($this->object->hasCachePool());
+        $this->object->setCachePool($this->pool);
+        $this->assertTrue($this->object->hasCachePool());
     }
 }

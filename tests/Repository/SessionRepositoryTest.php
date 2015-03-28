@@ -13,7 +13,7 @@ class SessionRepositoryTest extends AbstractSimpleRepositoryTest
         $this->repository = new SessionRepository();
     }
     
-    public function testIfSessionIsActive()
+    public function testCheckIfSessionIsActive()
     {
         $this->assertTrue($this->repository->isSessionActive());
     }
