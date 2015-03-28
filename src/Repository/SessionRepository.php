@@ -34,6 +34,8 @@ class SessionRepository implements SimpleRepositoryInterface
     
     /**
      * Check if PHP session is active.
+     * 
+     * @return boolean True is a session is active, false otherwise.
      */
     public function isSessionActive()
     {
