@@ -116,7 +116,7 @@ class SimpleRepositoryAdapterTest extends \PHPUnit_Framework_TestCase
             }));
         $this->setUpSimpleRepositoryAdapter($mock);
         
-        $result = $this->repository->containsAll(['key1', 'key2']);
+        $result = $this->repository->containsList(['key1', 'key2']);
         
         $this->assertCount(2, $result);
         $this->assertArrayHasKey('key1', $result);
@@ -140,7 +140,7 @@ class SimpleRepositoryAdapterTest extends \PHPUnit_Framework_TestCase
             }));
         $this->setUpSimpleRepositoryAdapter($mock);
         
-        $result = $this->repository->fetchAll(['key1', 'key2']);
+        $result = $this->repository->fetchList(['key1', 'key2']);
         
         $this->assertCount(2, $result);
         $this->assertArrayHasKey('key1', $result);
@@ -159,7 +159,7 @@ class SimpleRepositoryAdapterTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $this->setUpSimpleRepositoryAdapter($mock);
         
-        $this->assertTrue($this->repository->storeAll([
+        $this->assertTrue($this->repository->storeList([
             $this->createItem('key1'),
             $this->createItem('key2'),
             $this->createItem('key3'),
@@ -179,7 +179,7 @@ class SimpleRepositoryAdapterTest extends \PHPUnit_Framework_TestCase
             }));
         $this->setUpSimpleRepositoryAdapter($mock);
         
-        $this->assertFalse($this->repository->storeAll([
+        $this->assertFalse($this->repository->storeList([
             $this->createItem('key1'),
             $this->createItem('key2'),
             $this->createItem('key3'),
@@ -199,7 +199,7 @@ class SimpleRepositoryAdapterTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $this->setUpSimpleRepositoryAdapter($mock);
         
-        $this->assertTrue($this->repository->deleteAll(['key1', 'key2']));
+        $this->assertTrue($this->repository->deleteList(['key1', 'key2']));
     }
     
     public function testDeleteItemListFromAdaptedRepositoryReturnsFalseIfAnyFailed()
@@ -219,6 +219,6 @@ class SimpleRepositoryAdapterTest extends \PHPUnit_Framework_TestCase
             }));
         $this->setUpSimpleRepositoryAdapter($mock);
         
-        $this->assertFalse($this->repository->deleteAll(['key1', 'key2', 'key3']));
+        $this->assertFalse($this->repository->deleteList(['key1', 'key2', 'key3']));
     }
 }

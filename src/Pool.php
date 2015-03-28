@@ -97,13 +97,13 @@ class Pool implements CacheItemPoolInterface
      */
     public function getItems(array $keys = [])
     {
-        // Method uses a complecated logic to make sure only the containsAll and fetchAll 
+        // Method uses a complecated logic to make sure only the containsList and fetchList 
         // repository function are called, as that may improve performance over multiple 
         // contains and fetch calls.
         
-        $containsResult = $this->repository->containsAll($keys);
+        $containsResult = $this->repository->containsList($keys);
         $cachedKeys     = array_keys(array_filter($containsResult));
-        $cachedItems    = $this->repository->fetchAll($cachedKeys);
+        $cachedItems    = $this->repository->fetchList($cachedKeys);
         $uncachedItems  = array_filter($containsResult, function ($contains) {
             return !$contains;
         });
@@ -142,7 +142,7 @@ class Pool implements CacheItemPoolInterface
      */
     public function deleteItems(array $keys)
     {
-        $this->repository->deleteAll($keys);
+        $this->repository->deleteList($keys);
         return $this;
     }
 
@@ -200,7 +200,7 @@ class Pool implements CacheItemPoolInterface
             $item->markCached();
         });
         
-        $result = $this->repository->storeAll($items);
+        $result = $this->repository->storeList($items);
         $this->deferred = [];
         
         return $result;

@@ -14,7 +14,7 @@ interface RepositoryInterface extends SimpleRepositoryInterface
      * @return array Associative array with booleans linked to the keys. 
      *               Boolean true if an item if found with that key, false if not.
      */
-    public function containsAll(array $keys);
+    public function containsList(array $keys);
     
     /**
      * Fetch multiple items from the cache repository.
@@ -24,7 +24,7 @@ interface RepositoryInterface extends SimpleRepositoryInterface
      * @return array Associative array with \JoeBengalen\Cache\Item or null linked to 
      *               each key. Null if no item was found with that key.
      */
-    public function fetchAll(array $keys);
+    public function fetchList(array $keys);
     
     /**
      * Store multiple items into the cache repostiroy.
@@ -36,7 +36,7 @@ interface RepositoryInterface extends SimpleRepositoryInterface
      * 
      * @return boolean True on succes, false on failure.
      */
-    public function storeAll(array $items);
+    public function storeList(array $items);
     
     /**
      * Delete multiple items from the cache repository.
@@ -48,5 +48,5 @@ interface RepositoryInterface extends SimpleRepositoryInterface
      * 
      * @return boolean True on succes, false on failure.
      */
-    public function deleteAll(array $keys);
+    public function deleteList(array $keys);
 }

@@ -48,7 +48,7 @@ class SimpleRepositoryAdapter implements RepositoryInterface
         return $this->repository->clear();
     }
     
-    public function containsAll(array $keys)
+    public function containsList(array $keys)
     {
         $result = [];
         foreach ($keys as $key) {
@@ -57,7 +57,7 @@ class SimpleRepositoryAdapter implements RepositoryInterface
         return $result;
     }
     
-    public function fetchAll(array $keys)
+    public function fetchList(array $keys)
     {
         $result = [];
         foreach ($keys as $key) {
@@ -66,7 +66,7 @@ class SimpleRepositoryAdapter implements RepositoryInterface
         return $result;
     }
     
-    public function storeAll(array $items)
+    public function storeList(array $items)
     {
         $result = true;
         foreach ($items as $item) {
@@ -75,7 +75,7 @@ class SimpleRepositoryAdapter implements RepositoryInterface
         return $result;
     }
     
-    public function deleteAll(array $keys)
+    public function deleteList(array $keys)
     {
         $result = true;
         foreach ($keys as $key) {
