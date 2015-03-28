@@ -28,7 +28,7 @@ class ItemTest extends \PHPUnit_Framework_TestCase
         ];
     }
     
-    public function testGetKey()
+    public function testGetItemKey()
     {
         $item = new Item('key');
         $this->assertEquals('key', $item->getKey());
@@ -37,13 +37,13 @@ class ItemTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider invalidKeyProvider
      */
-    public function testExceptionOnInvalidKey($invalidKey)
+    public function testItemThrowsExceptionOnInvalidKey($invalidKey)
     {
         $this->setExpectedException('\JoeBengalen\Cache\InvalidArgumentException');
         new Item($invalidKey);
     }
     
-    public function testNoExpiration()
+    public function testItemWithoutExpiration()
     {
         $item = new Item('test1', null);
         $item->set(null);
@@ -51,7 +51,7 @@ class ItemTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $item->getExpiration());
     }
     
-    public function testDefaultTimeToLive()
+    public function testItemWithDefaultTimeToLive()
     {
         $item = new Item('test1', 3600);
         $item->set(null);
@@ -59,20 +59,20 @@ class ItemTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $item->getExpiration());
     }
     
-    public function testInvalidDefaultTimeToLive()
+    public function testItemThrowsExceptionOnInvalidDefaultTimeToLive()
     {
         $this->setExpectedException('\JoeBengalen\Cache\InvalidArgumentException');
         new Item('key', 'invalid');
     }
     
-    public function testExpiresAtDateTime()
+    public function testItemExpiresAtGivenDateTime()
     {
         $item = new Item('key');
         $this->assertInstanceOf('\JoeBengalen\Cache\Item', $item->expiresAt(new DateTime('10 seconds')));
         $this->assertEquals(new DateTime('10 seconds'), $item->getExpiration());
     }
     
-    public function testExpiresAtDateTimeImmutable()
+    public function testItemExpiresAtGivenDateTimeImmutable()
     {
         if (version_compare(phpversion(), '5.5.0', '>=')) {
             $item = new Item('key');
@@ -81,14 +81,14 @@ class ItemTest extends \PHPUnit_Framework_TestCase
         }
     }
     
-    public function testExpiresAtInvalidDateTime()
+    public function testItemThrowsExceptionOnInvalidExpiresAt()
     {
         $item = new Item('key');
         $this->setExpectedException('\JoeBengalen\Cache\InvalidArgumentException');
         $item->expiresAt('invalid');
     }
     
-    public function testExpiresAfterInteger()
+    public function testItemExpiresAfterGivenSeconds()
     {
         $item = new Item('key');
         
@@ -101,7 +101,7 @@ class ItemTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($item->isExpired());
     }
     
-    public function testExpiresAfterDateInterval()
+    public function testItemExpiresAfterGivenDateInterval()
     {
         $item = new Item('key');
         $this->assertInstanceOf('\JoeBengalen\Cache\Item', $item->expiresAfter(new DateInterval('PT10S')));
@@ -109,14 +109,14 @@ class ItemTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($item->isExpired());
     }
     
-    public function testExpiresAfterInvalidTime()
+    public function testItemThrowsExceptionOnInvalidExpiresAfter()
     {
         $item = new Item('key');
         $this->setExpectedException('\JoeBengalen\Cache\InvalidArgumentException');
         $item->expiresAfter('invalid');
     }
     
-    public function testSpecifiedTimeToLive()
+    public function testSetItemValueWithSpecifiedTimeToLive()
     {
         $item = new Item('test1');
         $item->set(null, 10);
@@ -124,7 +124,7 @@ class ItemTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($future, $item->getExpiration());
     }
     
-    public function testSpecifiedExpiration()
+    public function testSetValueWithSpecifiedExpiration()
     {
         $item = new Item('test1');
         $expected = new DateTime('+ 10 seconds');
@@ -132,14 +132,14 @@ class ItemTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $item->getExpiration());
     }
     
-    public function testInvalidTimeToLiveAtSet()
+    public function testItemThrowsExceptionOnInvalidTimeToLiveWhenSettingValue()
     {
         $this->setExpectedException('\JoeBengalen\Cache\InvalidArgumentException');
         $item = new Item('key');
         $item->set(null, 'invalid');
     }
     
-    public function testMarkCachedAndExists()
+    public function testItemExistsAfterMarkedAsCached()
     {
         $item = new Item('key');
         $this->assertFalse($item->exists());
@@ -147,7 +147,7 @@ class ItemTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($item->exists());
     }
     
-    public function testIsExpired()
+    public function testItemIsExpired()
     {
         $item = new Item('key');
         $item->expiresAfter(10);
@@ -156,7 +156,7 @@ class ItemTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($item->isExpired());
     }
     
-    public function testIsHit()
+    public function testItemIsHit()
     {
         $item = $this->itemFactory(null);
         $item->expiresAfter(-10);
@@ -167,43 +167,40 @@ class ItemTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($item->isHit());
     }
     
-    public function testSetGetValueNull()
+    public function testSettingItemValueOfNull()
     {
         $item = $this->itemFactory(null);
         $this->assertNull($item->get());
     }
     
-    public function testSetGetValueTrue()
+    public function testSettingItemValueOfTypeBoolean()
     {
         $item = $this->itemFactory(true);
         $this->assertTrue($item->get());
-    }
-    
-    public function testSetGetValueFalse()
-    {
+        
         $item = $this->itemFactory(false);
         $this->assertFalse($item->get());
     }
     
-    public function testSetGetValueInteger()
+    public function testSettingItemValueOfTypeInteger()
     {
         $item = $this->itemFactory(33);
         $this->assertSame(33, $item->get());
     }
     
-    public function testSetGetValueFloat()
+    public function testSettingItemValueOfTypeFloat()
     {
         $item = $this->itemFactory(1.234);
         $this->assertSame(1.234, $item->get());
     }
     
-    public function testSetGetValueString()
+    public function testSettingItemValueOfTypeString()
     {
         $item = $this->itemFactory('string value');
         $this->assertSame('string value', $item->get());
     }
     
-    public function testSetGetValueObject()
+    public function testSettingItemValueOfTypeObject()
     {
         $obj = new \stdClass();
         $obj->test = true;
