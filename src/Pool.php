@@ -45,7 +45,7 @@ class Pool implements CacheItemPoolInterface
      */
     public function __construct($repository, $defaultTtl = 3600)
     {
-        if ($repository instanceof SimpleRepositoryInterface) {
+        if ($repository instanceof SimpleRepositoryInterface && !$repository instanceof RepositoryInterface) {
             $repository = new SimpleRepositoryAdapter($repository);
         }
         
