@@ -3,7 +3,6 @@
 namespace JoeBengalen\Cache\Repository;
 
 use JoeBengalen\Cache\Repository\SimpleRepositoryInterface;
-use JoeBengalen\Cache\Item;
 
 interface RepositoryInterface extends SimpleRepositoryInterface
 {
