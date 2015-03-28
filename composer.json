@@ -23,5 +23,10 @@
             "JoeBengalen\\Cache\\": "src",
             "Psr\\Cache\\": "psr-6"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JoeBengalen\\Cache\\Test\\": "tests"
+        }
     }
 }
