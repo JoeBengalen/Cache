@@ -9,10 +9,15 @@ use JoeBengalen\Cache\Item;
 class SimpleRepositoryAdapter implements RepositoryInterface
 {
     /**
-     * @var \JoeBengalen\Cache\Repository\SimpleRepositoryInterface $repository 
+     * @var \JoeBengalen\Cache\Repository\SimpleRepositoryInterface $repository Adapted object.
      */
     protected $repository;
     
+    /**
+     * Map a SimpleRepositoryInterface to a RepositoryInterface.
+     * 
+     * @param \JoeBengalen\Cache\Repository\SimpleRepositoryInterface $repository Object to wrap.
+     */
     public function __construct(SimpleRepositoryInterface $repository)
     {
         $this->repository = $repository;
