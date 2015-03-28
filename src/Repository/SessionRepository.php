@@ -12,7 +12,7 @@ use JoeBengalen\Cache\CacheException;
 class SessionRepository implements SimpleRepositoryInterface
 {
     /**
-     * @var array $data Reference to $_SESSION value.
+     * @var array $data Reference to an index of the global variable $_SESSION.
      */
     protected $data;
     
