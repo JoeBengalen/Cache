@@ -5,9 +5,6 @@ namespace JoeBengalen\Cache\Repository;
 use JoeBengalen\Cache\CacheException;
 use JoeBengalen\Cache\Item;
 
-/**
- * TODO: Update all docblocks!
- */
 class SessionRepository implements SimpleRepositoryInterface
 {
     /**
@@ -41,16 +38,25 @@ class SessionRepository implements SimpleRepositoryInterface
         return session_status() === PHP_SESSION_ACTIVE;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function contains($key)
     {
         return isset($this->data[$key]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetch($key)
     {
         return $this->contains($key) ? clone $this->data[$key] : null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function store(Item $item)
     {
         $this->data[$item->getKey()] = $item;
@@ -58,6 +64,9 @@ class SessionRepository implements SimpleRepositoryInterface
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function delete($key)
     {
         unset($this->data[$key]);
@@ -65,6 +74,9 @@ class SessionRepository implements SimpleRepositoryInterface
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function clear()
     {
         $this->data = [];

@@ -54,11 +54,17 @@ class FileRepository implements SimpleRepositoryInterface
         return $this->generateFilename($item->getExpiration()->format('YmdHis').'.'.$item->getKey());
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function contains($key)
     {
         return !is_null($this->findFilename($key));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetch($key)
     {
         if (!$this->contains($key)) {
@@ -68,6 +74,9 @@ class FileRepository implements SimpleRepositoryInterface
         return unserialize(file_get_contents($this->findFilename($key)));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function store(Item $item)
     {
         $this->delete($item->getKey());
@@ -75,6 +84,9 @@ class FileRepository implements SimpleRepositoryInterface
         return file_put_contents($this->generateNewFilename($item), serialize($item)) !== false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function delete($key)
     {
         foreach ($this->findFilenameList($key) as $filename) {
@@ -84,6 +96,9 @@ class FileRepository implements SimpleRepositoryInterface
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function clear()
     {
         foreach ($this->findFilenameList('*') as $filename) {

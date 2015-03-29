@@ -21,31 +21,49 @@ class SimpleRepositoryAdapter implements RepositoryInterface
         $this->repository = $repository;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function contains($key)
     {
         return $this->repository->contains($key);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetch($key)
     {
         return $this->repository->fetch($key);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function store(Item $item)
     {
         return $this->repository->store($item);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function delete($key)
     {
         return $this->repository->delete($key);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function clear()
     {
         return $this->repository->clear();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function containsList(array $keys)
     {
         $result = [];
@@ -56,6 +74,9 @@ class SimpleRepositoryAdapter implements RepositoryInterface
         return $result;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetchList(array $keys)
     {
         $result = [];
@@ -66,6 +87,9 @@ class SimpleRepositoryAdapter implements RepositoryInterface
         return $result;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function storeList(array $items)
     {
         $result = true;
@@ -76,6 +100,9 @@ class SimpleRepositoryAdapter implements RepositoryInterface
         return $result;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function deleteList(array $keys)
     {
         $result = true;

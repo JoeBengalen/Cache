@@ -11,16 +11,25 @@ class ArrayRepository implements SimpleRepositoryInterface
      */
     protected $data = [];
 
+    /**
+     * {@inheritdoc}
+     */
     public function contains($key)
     {
         return isset($this->data[$key]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetch($key)
     {
         return $this->contains($key) ? clone $this->data[$key] : null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function store(Item $item)
     {
         $this->data[$item->getKey()] = $item;
@@ -28,6 +37,9 @@ class ArrayRepository implements SimpleRepositoryInterface
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function delete($key)
     {
         unset($this->data[$key]);
@@ -35,6 +47,9 @@ class ArrayRepository implements SimpleRepositoryInterface
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function clear()
     {
         $this->data = [];
