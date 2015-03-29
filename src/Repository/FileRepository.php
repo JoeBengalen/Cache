@@ -5,14 +5,28 @@ namespace JoeBengalen\Cache\Repository;
 use JoeBengalen\Cache\InvalidArgumentException;
 use JoeBengalen\Cache\Item;
 
-/**
- * TODO: Update all docblocks!
- */
 class FileRepository implements SimpleRepositoryInterface
 {
+    /**
+     * @var string Existing writable directory to store files.
+     */
     protected $directory;
+
+    /**
+     * @var string Extenstion for files.
+     */
     protected $extension;
 
+    /**
+     * Create a file repository.
+     *
+     * @param string $directory Existing writable directory.
+     * @param string $extension (optional) File extention for files.
+     *
+     * @throws \JoeBengalen\Cache\InvalidArgumentException If $directory is not a valid directory.
+     * @throws \JoeBengalen\Cache\InvalidArgumentException If $extension is not a string.
+     * @throws \JoeBengalen\Cache\InvalidArgumentException If $directory is not writable.
+     */
     public function __construct($directory, $extension = 'cache')
     {
         if (!is_string($directory) || !is_dir($directory)) {
@@ -30,28 +44,54 @@ class FileRepository implements SimpleRepositoryInterface
         $this->extension = '.'.str_replace(['*'], [''], $extension); // when allowing wildcard here users could delete the entire directory content by deleting key '*'
     }
 
-    public function generateFilename($name)
+    /**
+     * Generate full file path bases on filename.
+     *
+     * @param string $filename Filename to create the full path for.
+     *
+     * @return string Generated file path.
+     */
+    public function generateFilepath($filename)
     {
-        return $this->directory.$name.$this->extension;
+        return $this->directory.$filename.$this->extension;
     }
 
-    public function findFilenameList($key)
+    /**
+     * Get a list of files based on a filename.
+     *
+     * @param type $filename Filename to find files for.
+     *
+     * @return string[] List of filenames.
+     */
+    public function findFiles($filename)
     {
-        $filename = $this->generateFilename("*.$key");
-
-        return glob($filename);
+        return glob($this->generateFilepath("*.$filename"));
     }
 
-    public function findFilename($key)
+    /**
+     * Get the first found filename based on an items key.
+     *
+     * @param string $filename Item key to find the file for.
+     *
+     * @return string|null Filename or null of not found.
+     */
+    public function findFile($filename)
     {
-        $list = $this->findFilenameList($key);
+        $list = $this->findFiles($filename);
 
         return !empty($list) ? $list[0] : null;
     }
 
-    public function generateNewFilename(Item $item)
+    /**
+     * Generage filename for item.
+     *
+     * @param Item $item Item to generate a filename for.
+     *
+     * @return string Generated filename.
+     */
+    public function generateFilename($item)
     {
-        return $this->generateFilename($item->getExpiration()->format('YmdHis').'.'.$item->getKey());
+        return $item->getExpiration()->format('YmdHis').'.'.$item->getKey();
     }
 
     /**
@@ -59,7 +99,7 @@ class FileRepository implements SimpleRepositoryInterface
      */
     public function contains($key)
     {
-        return !is_null($this->findFilename($key));
+        return !is_null($this->findFile($key));
     }
 
     /**
@@ -71,7 +111,7 @@ class FileRepository implements SimpleRepositoryInterface
             return;
         }
 
-        return unserialize(file_get_contents($this->findFilename($key)));
+        return unserialize(file_get_contents($this->findFile($key)));
     }
 
     /**
@@ -81,7 +121,7 @@ class FileRepository implements SimpleRepositoryInterface
     {
         $this->delete($item->getKey());
 
-        return file_put_contents($this->generateNewFilename($item), serialize($item)) !== false;
+        return file_put_contents($this->generateFilepath($this->generateFilename($item)), serialize($item)) !== false;
     }
 
     /**
@@ -89,7 +129,7 @@ class FileRepository implements SimpleRepositoryInterface
      */
     public function delete($key)
     {
-        foreach ($this->findFilenameList($key) as $filename) {
+        foreach ($this->findFiles($key) as $filename) {
             unlink($filename);
         }
 
@@ -101,7 +141,7 @@ class FileRepository implements SimpleRepositoryInterface
      */
     public function clear()
     {
-        foreach ($this->findFilenameList('*') as $filename) {
+        foreach ($this->findFiles('*') as $filename) {
             unlink($filename);
         }
 
