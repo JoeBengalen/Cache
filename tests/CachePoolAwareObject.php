@@ -8,4 +8,3 @@ class CachePoolAwareObject
 {
     use CachePoolAwareTrait;
 }
-
