@@ -41,7 +41,7 @@ class Item implements CacheItemInterface
      * Create cache item.
      *
      * @param string   $key        Unique cache identifier
-     * @param int|null $defaultTtl (optional) Default time to life of an newly set value, null is infinite.
+     * @param int|null $defaultTtl Default time to life of an newly set value, null is infinite.
      *
      * @throws \JoeBengalen\Cache\InvalidArgumentException If $defaultTtl is not an integer or null.
      */

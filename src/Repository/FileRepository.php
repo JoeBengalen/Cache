@@ -21,7 +21,7 @@ class FileRepository implements SimpleRepositoryInterface
      * Create a file repository.
      *
      * @param string $directory Existing writable directory.
-     * @param string $extension (optional) File extention for files.
+     * @param string $extension File extention for files.
      *
      * @throws \JoeBengalen\Cache\InvalidArgumentException If $directory is not a valid directory.
      * @throws \JoeBengalen\Cache\InvalidArgumentException If $extension is not a string.
