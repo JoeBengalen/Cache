@@ -138,7 +138,7 @@ class Item implements CacheItemInterface
      *     the value should be stored permanently or for as long as the
      *     implementation allows.
      * 
-     * @return static Invoked object.
+     * @return self.
      */
     public function set($value, $ttl = null)
     {
@@ -170,7 +170,7 @@ class Item implements CacheItemInterface
      *   the value should be stored permanently or for as long as the
      *   implementation allows.
      *
-     * @return static Called object.
+     * @return self.
      * 
      * @throws \JoeBengalen\Cache\InvalidArgumentException If $expiration is not of type \DataTime or \DateTimeImmutable
      */
@@ -196,7 +196,7 @@ class Item implements CacheItemInterface
      *   expired. An integer parameter is understood to be the time in seconds until
      *   expiration.
      *
-     * @return static Called object.
+     * @return self.
      */
     public function expiresAfter($time)
     {
@@ -215,7 +215,7 @@ class Item implements CacheItemInterface
     /**
      * Mark the item as cached
      * 
-     * @return static Invoked object.
+     * @return self.
      */
     public function markCached()
     {

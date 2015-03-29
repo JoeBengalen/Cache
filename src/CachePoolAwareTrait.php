@@ -30,7 +30,7 @@ trait CachePoolAwareTrait
      * 
      * @param \Psr\Cache\CacheItemPoolInterface $cachePool Cache pool to set.
      * 
-     * @return static Invoked object.
+     * @return self.
      */
     public function setCachePool(CacheItemPoolInterface $cachePool)
     {

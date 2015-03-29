@@ -138,7 +138,7 @@ class Pool implements CacheItemPoolInterface
      *
      * @param array $keys Array of keys that should be removed from the pool.
      * 
-     * @return static Invoked object.
+     * @return self.
      */
     public function deleteItems(array $keys)
     {
@@ -151,7 +151,7 @@ class Pool implements CacheItemPoolInterface
      *
      * @param \JoeBengalen\Cache\Item $item Cache item to save.
      *
-     * @return static Invoked object.
+     * @return self.
      * 
      * @throws \JoeBengalen\Cache\InvalidArgumentException If $item is not \JoeBengalen\Cache\Item.
      */
@@ -171,7 +171,7 @@ class Pool implements CacheItemPoolInterface
      *
      * @param \JoeBengalen\Cache\Item $item Cache item to save.
      *
-     * @return static Invoked object.
+     * @return self.
      * 
      * @throws \JoeBengalen\Cache\InvalidArgumentException If $item is not \JoeBengalen\Cache\Item.
      */
