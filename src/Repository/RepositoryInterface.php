@@ -2,34 +2,49 @@
 
 namespace JoeBengalen\Cache\Repository;
 
-use JoeBengalen\Cache\Item;
-
-interface RepositoryInterface
+interface RepositoryInterface extends SimpleRepositoryInterface
 {
-    // key: string, return:boolean
-    public function contains($key);
-    
-    // key: string[], return: array as [key => boolean]
-    public function containsAll(array $keys);
-    
-    // key: string, return: Item|null
-    public function fetch($key);
-    
-    // key: string[], return: array as [key => Item|null]
-    public function fetchAll(array $keys);
-    
-    // return: boolean
-    public function store(Item $item);
-    
-    // item: Item[], return: boolean
-    public function storeAll(array $items);
-    
-    // key: string, return: boolean
-    public function delete($key);
-    
-    // keys: string[], return: boolean
-    public function deleteAll(array $keys);
-    
-    // return: boolean
-    public function clear();
+    /**
+     * Check for each given key if the cache repository contains an item with that key.
+     *
+     * @param string[] $keys Indexed array of keys
+     *
+     * @return array Associative array with booleans linked to the keys.
+     *               Boolean true if an item if found with that key, false if not.
+     */
+    public function containsList(array $keys);
+
+    /**
+     * Fetch multiple items from the cache repository.
+     *
+     * @param string[] $keys Indexed array of keys.
+     *
+     * @return array Associative array with \JoeBengalen\Cache\Item or null linked to
+     *               each key. Null if no item was found with that key.
+     */
+    public function fetchList(array $keys);
+
+    /**
+     * Store multiple items into the cache repostiroy.
+     *
+     * If storing an item fails, it will continue trying to store the other
+     * items. If any store failed, false will be returned.
+     *
+     * @param string[] $items Indexed array of keys.
+     *
+     * @return bool True on succes, false on failure.
+     */
+    public function storeList(array $items);
+
+    /**
+     * Delete multiple items from the cache repository.
+     *
+     * If the deletion of an item fails, it will continue trying to delete the other
+     * items. If any deletion failed, false will be returned.
+     *
+     * @param string[] $keys Indexed array of keys.
+     *
+     * @return bool True on succes, false on failure.
+     */
+    public function deleteList(array $keys);
 }

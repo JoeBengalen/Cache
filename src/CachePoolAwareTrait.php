@@ -1,4 +1,5 @@
 <?php
+
 /**
  * JoeBengalen Cache library.
  *
@@ -15,44 +16,44 @@ use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * Cache pool aware trait.
- * 
+ *
  * Implements the control of a cache pool to an object.
  */
 trait CachePoolAwareTrait
 {
     /**
-     * @var \Psr\Cache\CacheItemPoolInterface $cachePool 
+     * @var \Psr\Cache\CacheItemPoolInterface
      */
     protected $cachePool;
-    
+
     /**
      * Set a cache pool.
-     * 
+     *
      * @param \Psr\Cache\CacheItemPoolInterface $cachePool Cache pool to set.
-     * 
-     * @return static Invoked object.
+     *
+     * @return self.
      */
     public function setCachePool(CacheItemPoolInterface $cachePool)
     {
         $this->cachePool = $cachePool;
-        
+
         return $this;
     }
-    
+
     /**
      * Get the current set cache pool.
-     * 
+     *
      * @return \Psr\Cache\CacheItemPoolInterface|null Curent cache pool or null of none is set.
      */
     public function getCachePool()
     {
         return $this->cachePool;
     }
-    
+
     /**
      * Check if a cache pool is set.
-     * 
-     * @return boolean True is a cahce pool set, false otherwise.
+     *
+     * @return bool True is a cahce pool set, false otherwise.
      */
     public function hasCachePool()
     {

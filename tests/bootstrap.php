@@ -1,26 +1,7 @@
 <?php
+
 namespace JoeBengalen\Cache\Test;
 
-require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+session_start();
 
-// loader for some extra file used by soem tests
-spl_autoload_register(function ($class) {
-    $map = [
-        'JoeBengalen\\Cache\\Test\\' => __DIR__ . DIRECTORY_SEPARATOR,
-    ];
-
-    foreach ($map as $prefix => $source) {
-        $len = strlen($prefix);
-        if (strncmp($prefix, $class, $len) !== 0) {
-            continue;
-        }
-
-        $relativeClass = substr($class, $len);
-        $file          = $source . str_replace('\\', '/', $relativeClass) . '.php';
-
-        if (file_exists($file)) {
-            require $file;
-            break;
-        }
-    }
-});
+require dirname(__DIR__).DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';

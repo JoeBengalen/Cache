@@ -11,8 +11,10 @@ date_default_timezone_set('Europe/Amsterdam');
 
 require_once 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
-$repo = new Repository\FileRepository(__DIR__);
-//$repo = new Repository\SessionRepository();
+session_start(); // session must be started AFTER the Item class was included!
+
+//$repo = new Repository\FileRepository(__DIR__);
+$repo = new Repository\SessionRepository();
 
 $pool = new Pool($repo);
 
